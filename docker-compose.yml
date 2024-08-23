@@ -1,0 +1,23 @@
+services:
+  CurrencyExchangeDB:
+    restart: always
+    image: postgres:16.3
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: CurrencyExchangeDB
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  currency-app:
+    build: .
+    depends_on:
+      - CurrencyExchangeDB
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://CurrencyExchangeDB:5432/CurrencyExchangeDB
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
