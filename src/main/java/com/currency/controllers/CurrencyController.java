@@ -2,7 +2,6 @@ package com.currency.controllers;
 
 import com.currency.models.Currency;
 import com.currency.services.CurrencyService;
-import com.currency.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +17,8 @@ public class CurrencyController {
     private CurrencyService currencyService;
 
     @Autowired
-    public CurrencyController(CurrencyService currencyService, ExchangeRateService exchangeRateService) {
+    public CurrencyController(CurrencyService currencyService) {
         this.currencyService = currencyService;
-        this.exchangeRateService = exchangeRateService;
     }
 
     @GetMapping("/all")
