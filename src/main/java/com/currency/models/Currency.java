@@ -1,17 +1,12 @@
 package com.currency.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "currency", schema = "currency_exchange")
@@ -19,6 +14,7 @@ public class Currency {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "code")
@@ -30,9 +26,4 @@ public class Currency {
     @Column(name = "sign")
     private String sign;
 
-    public Currency(String code, String fullName, String sign) {
-        this.code = code;
-        this.fullName = fullName;
-        this.sign = sign;
-    }
 }
