@@ -33,4 +33,9 @@ public class CurrencyService {
         return currencyRepository.save(currency);
     }
 
+    @Transactional(readOnly = false)
+    public void deleteCurrencyByCode(String code) {
+        currencyRepository.deleteByCode(code);
+    }
+
 }

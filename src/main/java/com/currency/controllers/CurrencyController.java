@@ -1,7 +1,6 @@
 package com.currency.controllers;
 
 import com.currency.models.Currency;
-import com.currency.models.ExchangeRate;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import java.util.Optional;
 public class CurrencyController {
 
     private CurrencyService currencyService;
-    private ExchangeRateService exchangeRateService;
 
     @Autowired
     public CurrencyController(CurrencyService currencyService, ExchangeRateService exchangeRateService) {
@@ -49,5 +47,16 @@ public class CurrencyController {
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCurrency);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteCurrency(@RequestParam(value = "code", required = false) String code) {
+        if (code == null || code.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parameter 'code' is missing");
+        }
+        currencyService.deleteCurrencyByCode(code);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
 
 }
