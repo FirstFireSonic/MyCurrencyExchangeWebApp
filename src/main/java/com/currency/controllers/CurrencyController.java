@@ -27,8 +27,9 @@ public class CurrencyController {
     }
 
     @GetMapping("/{sign}")
-    public Optional<Currency> getCurrency(@PathVariable("sign") String sign) {
-        return currencyService.getCurrency(sign);
+    public ResponseEntity<Currency> getCurrency(@PathVariable("sign") String sign) {
+        Optional<Currency> optionalCurrency = currencyService.getCurrency(sign);
+        return optionalCurrency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
@@ -36,6 +37,11 @@ public class CurrencyController {
             @RequestParam("name") String name,
             @RequestParam("code") String code,
             @RequestParam("sign") String sign) {
+
+        if (name == null || name.isEmpty() || code == null || code.isEmpty() || sign == null || sign.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Currency savedCurrency = currencyService.addCurrency(
                 Currency.builder()
                         .code(code)
@@ -54,7 +60,5 @@ public class CurrencyController {
         currencyService.deleteCurrencyByCode(code);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-
 
 }

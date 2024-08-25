@@ -28,9 +28,11 @@ public class ExchangeRateController {
     }
 
     @GetMapping("all")
-    public List<ExchangeRate> getAllAvailableExchangeRate() {
-        return exchangeRateService.getAllExchangeRates();
+    public ResponseEntity<List<ExchangeRate>> getAllAvailableExchangeRates() {
+        List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
+        return ResponseEntity.ok(exchangeRates);
     }
+
 
     @GetMapping("{codes}")
     public ResponseEntity<String> getCertainExchangeRate(@PathVariable("codes") String codes) {
@@ -40,10 +42,10 @@ public class ExchangeRateController {
         if (!currencyService.existsCurrencyByCode(code1) ||
                 !currencyService.existsCurrencyByCode(code2)) {
             /*
-            * TODO
-            *  -Redirect to page where new currency and exchange rate can be added.
-            */
-            return new  ResponseEntity<>("Nothing", HttpStatus.OK);
+             * TODO
+             *  -Redirect to page where new currency and exchange rate can be added.
+             */
+            return new ResponseEntity<>("Nothing", HttpStatus.OK);
         }
 
         if (code1.equals(code2)) {
@@ -54,9 +56,9 @@ public class ExchangeRateController {
         BigDecimal code2Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(code2));
 
         /*
-        *  TODO
-        *   -Replace BigDecimal with something better, because it is deprecated.
-        */
+         *  TODO
+         *   -Replace BigDecimal with something better, because it is deprecated.
+         */
 
         BigDecimal currency = code1Value.divide(code2Value, 6, BigDecimal.ROUND_DOWN);
         String result = currency.toString();
