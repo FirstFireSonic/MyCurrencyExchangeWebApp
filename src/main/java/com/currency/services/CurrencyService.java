@@ -38,4 +38,8 @@ public class CurrencyService {
         currencyRepository.deleteByCode(code);
     }
 
+    public boolean existsCurrencyByCode(String code) {
+        return currencyRepository.existsByCode(code);
+    }
+
 }
