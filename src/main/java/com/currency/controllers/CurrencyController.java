@@ -27,7 +27,7 @@ public class CurrencyController {
     }
 
     @GetMapping("/{sign}")
-    public Optional<Currency> getCurrency(@PathVariable String sign) {
+    public Optional<Currency> getCurrency(@PathVariable("sign") String sign) {
         return currencyService.getCurrency(sign);
     }
 
