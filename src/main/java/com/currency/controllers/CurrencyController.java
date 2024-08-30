@@ -22,9 +22,15 @@ public class CurrencyController {
     }
 
     @GetMapping("/all")
-    public List<Currency> getAllAvailableCurrencies() {
-        return currencyService.getCurrencies();
+    public ResponseEntity<List<Currency>> getAllAvailableCurrencies() {
+        List<Currency> allCurrencies = currencyService.getCurrencies();
+        if (allCurrencies.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(allCurrencies);
+        }
     }
+
 
     @GetMapping("/{sign}")
     public ResponseEntity<Currency> getCurrency(@PathVariable("sign") String sign) {
