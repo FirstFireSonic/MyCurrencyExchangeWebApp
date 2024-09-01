@@ -1,8 +1,10 @@
 package com.currency.controllers;
 
 import com.currency.models.ExchangeRate;
-import com.currency.services.CurrencyService;
-import com.currency.services.ExchangeRateService;
+import com.currency.services.controllersServices.CurrencyService;
+import com.currency.services.controllersServices.ExchangeRateService;
+import com.currency.services.exception.NotExistCurrencyException;
+import com.currency.services.exception.TheSameCurrencyToExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,24 +40,15 @@ public class ExchangeRateController {
 
         if (!currencyService.existsCurrencyByCode(code1) ||
                 !currencyService.existsCurrencyByCode(code2)) {
-            /*
-             * TODO
-             *  -Redirect to page where new currency and exchange rate can be added.
-             */
-            return new ResponseEntity<>("Nothing", HttpStatus.OK);
+            throw new NotExistCurrencyException("This currency does not exist!");
         }
 
         if (code1.equals(code2)) {
-            return new ResponseEntity<>("You try to get exchange rate of two same currencies, the result will always be 1/1.", HttpStatus.OK);
+            throw new TheSameCurrencyToExchangeException("Those currencies are the same!");
         }
 
         BigDecimal code1Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(code1));
         BigDecimal code2Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(code2));
-
-        /*
-         *  TODO
-         *   -Replace BigDecimal with something better, because it is deprecated.
-         */
 
         BigDecimal currency = code1Value.divide(code2Value, 6, BigDecimal.ROUND_DOWN);
         String result = currency.toString();
@@ -71,46 +64,11 @@ public class ExchangeRateController {
         return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/certain")
-    public ResponseEntity<String> getCertainExchangeRateWithAmount(
-            @RequestParam("from") String from,
-            @RequestParam("to") String to,
-            @RequestParam("amount") int amount) {
-
-        if (!currencyService.existsCurrencyByCode(from) ||
-                !currencyService.existsCurrencyByCode(to)) {
-            /*
-             * TODO
-             *  -Redirect to page where new currency and exchange rate can be added.
-             */
-            return new ResponseEntity<>("Nothing", HttpStatus.OK);
-        }
-
-        if (from.equals(to)) {
-            return new ResponseEntity<>("You try to get exchange rate of two same currencies, the result will always be 1/1.", HttpStatus.OK);
-        }
-
-        BigDecimal code1Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(from));
-        BigDecimal code2Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(to));
-
-        /*
-         *  TODO
-         *   -Replace BigDecimal with something better, because it is deprecated.
-         */
-
-        BigDecimal currency = code1Value.divide(code2Value, 6, BigDecimal.ROUND_DOWN);
-        currency = currency.multiply(BigDecimal.valueOf(amount));
-        String result = currency.toString();
-        if (result.endsWith(".000000")) {
-            result = result.substring(0, result.indexOf('.'));
-        }
-        String formattedResponse = "";
-        if (from.equals("USD") || to.equals("USD")) {
-            formattedResponse = "1-" + from + "/" + to + "-" + result;
-        } else {
-            formattedResponse = "1-" + to + "/" + from + "-" + result;
-        }
-        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
-
-    }
+//    @GetMapping("/certain")
+//    public ResponseEntity<String> getCertainExchangeRateWithAmount(
+//            @RequestParam("from") String from,
+//            @RequestParam("to") String to,
+//            @RequestParam("amount") int amount) {
+//
+//    }
 }
