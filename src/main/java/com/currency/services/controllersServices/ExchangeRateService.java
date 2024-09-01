@@ -1,4 +1,4 @@
-package com.currency.services;
+package com.currency.services.controllersServices;
 
 import com.currency.models.ExchangeRate;
 import com.currency.repositories.ExchangeRateRepository;
