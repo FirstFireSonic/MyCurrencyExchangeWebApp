@@ -2,8 +2,8 @@ package com.currency.controllers;
 
 import com.currency.dto.CurrencyDTO;
 import com.currency.models.Currency;
-import com.currency.services.controllersServices.CurrencyService;
-import com.currency.services.exception.NoCurrenciesFoundException;
+import com.currency.services.CurrencyService;
+import com.currency.exception.NoCurrenciesFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

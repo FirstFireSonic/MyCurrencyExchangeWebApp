@@ -1,7 +1,7 @@
-package com.currency.services.controllersServices;
+package com.currency.services;
 
 import com.currency.dto.CurrencyDTO;
-import com.currency.services.mapper.CurrencyDTOMapper;
+import com.currency.mapper.CurrencyDTOMapper;
 import com.currency.models.Currency;
 import com.currency.repositories.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.currency.services.mapper;
+package com.currency.mapper;
 
 import com.currency.dto.CurrencyDTO;
 import com.currency.models.Currency;
