@@ -31,12 +31,11 @@ public class ExchangeRateController {
     public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
         List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
         if (exchangeRates.isEmpty()) {
-            throw new NoExchangeRateExistException("There is no exchange rates!");
+            return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok(exchangeRates);
         }
     }
-
 
     @GetMapping("{codes}")
     public ResponseEntity<String> getCertainExchangeRate(@PathVariable("codes") String codes) {
