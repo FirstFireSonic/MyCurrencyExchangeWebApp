@@ -3,7 +3,6 @@ package com.currency.controllers;
 import com.currency.dto.CurrencyDTO;
 import com.currency.models.Currency;
 import com.currency.services.CurrencyService;
-import com.currency.exception.NoCurrenciesFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +26,11 @@ public class CurrencyController {
     public ResponseEntity<List<CurrencyDTO>> getAllAvailableCurrencies() {
         List<CurrencyDTO> allCurrencies = currencyService.getCurrencies();
         if (allCurrencies.isEmpty()) {
-            throw new NoCurrenciesFoundException("No currencies found!");
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.ok(allCurrencies);
         }
     }
-
 
     @GetMapping("/{sign}")
     public ResponseEntity<Currency> getCurrency(@PathVariable("sign") String sign) {
@@ -61,9 +59,9 @@ public class CurrencyController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteCurrency(@RequestParam(value = "code", required = false) String code) {
+    public ResponseEntity<Void> deleteCurrency(@RequestParam(value = "code", required = false) String code) {
         if (code == null || code.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parameter 'code' is missing");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         currencyService.deleteCurrencyByCode(code);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
