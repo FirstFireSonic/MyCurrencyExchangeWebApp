@@ -1,7 +1,7 @@
 services:
   CurrencyExchangeDB:
     restart: always
-    image: postgres:16.3
+    image: postgres:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -16,7 +16,7 @@ services:
     depends_on:
       - CurrencyExchangeDB
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://CurrencyExchangeDB:5432/CurrencyExchangeDB
       SPRING_DATASOURCE_USERNAME: postgres
