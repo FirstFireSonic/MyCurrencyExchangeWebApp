@@ -1,4 +1,4 @@
-package com.currency.services.exception;
+package com.currency.exception;
 
 public class TheSameCurrencyToExchangeException extends RuntimeException {
     public TheSameCurrencyToExchangeException(String massage) {

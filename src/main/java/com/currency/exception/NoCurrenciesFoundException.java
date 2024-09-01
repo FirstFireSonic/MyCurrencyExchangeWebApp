@@ -1,4 +1,4 @@
-package com.currency.services.exception;
+package com.currency.exception;
 
 
 public class NoCurrenciesFoundException extends RuntimeException {
