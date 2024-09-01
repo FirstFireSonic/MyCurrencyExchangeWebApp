@@ -1,10 +1,11 @@
 package com.currency.controllers;
 
-import com.currency.models.ExchangeRate;
-import com.currency.services.controllersServices.CurrencyService;
-import com.currency.services.controllersServices.ExchangeRateService;
-import com.currency.services.exception.NotExistCurrencyException;
-import com.currency.services.exception.TheSameCurrencyToExchangeException;
+import com.currency.dto.ExchangeRateDTO;
+import com.currency.exception.NoExchangeRateExistException;
+import com.currency.services.CurrencyService;
+import com.currency.services.ExchangeRateService;
+import com.currency.exception.NoExistCurrencyException;
+import com.currency.exception.TheSameCurrencyToExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +28,13 @@ public class ExchangeRateController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<List<ExchangeRate>> getAllAvailableExchangeRates() {
-        List<ExchangeRate> exchangeRates = exchangeRateService.getAllExchangeRates();
-        return ResponseEntity.ok(exchangeRates);
+    public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
+        List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
+        if (exchangeRates.isEmpty()) {
+            throw new NoExchangeRateExistException("There is no exchange rates!");
+        } else {
+            return ResponseEntity.ok(exchangeRates);
+        }
     }
 
 
@@ -40,7 +45,7 @@ public class ExchangeRateController {
 
         if (!currencyService.existsCurrencyByCode(code1) ||
                 !currencyService.existsCurrencyByCode(code2)) {
-            throw new NotExistCurrencyException("This currency does not exist!");
+            throw new NoExistCurrencyException("This currency does not exist!");
         }
 
         if (code1.equals(code2)) {

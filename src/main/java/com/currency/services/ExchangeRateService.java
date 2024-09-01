@@ -1,5 +1,7 @@
-package com.currency.services.controllersServices;
+package com.currency.services;
 
+import com.currency.dto.ExchangeRateDTO;
+import com.currency.mapper.ExchangeRateDTOMapper;
 import com.currency.models.ExchangeRate;
 import com.currency.repositories.ExchangeRateRepository;
 import jakarta.persistence.EntityManager;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,14 +25,20 @@ public class ExchangeRateService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private ExchangeRateDTOMapper exchangeRateDTOMapper;
+
     @Autowired
-    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager) {
+    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.entityManager = entityManager;
+        this.exchangeRateDTOMapper = exchangeRateDTOMapper;
     }
 
-    public List<ExchangeRate> getAllExchangeRates() {
-        return exchangeRateRepository.findAll();
+    public List<ExchangeRateDTO> getAllExchangeRates() {
+        return exchangeRateRepository.findAll()
+                .stream()
+                .map(exchangeRateDTOMapper)
+                .collect(Collectors.toList());
     }
 
     public double getExchangeRateByTargetCurrencyCode(String targetCurrencyCode) {
