@@ -4,8 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-/pgdata/
-
 
 ### STS ###
 .apt_generated
