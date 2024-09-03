@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class CertainExchangeRateWithAmountDTOMapper {
@@ -18,16 +19,11 @@ public class CertainExchangeRateWithAmountDTOMapper {
         this.currencyDTOMapper = currencyDTOMapper;
     }
 
-    public CertainExchangeRateWithAmountDTO mapToDTO(Currency baseCurrency, Currency targetCurrency, BigDecimal rate, BigDecimal amount) {
-
-        CurrencyDTO baseCurrencyDTO = currencyDTOMapper.apply(baseCurrency);
-        CurrencyDTO targetCurrencyDTO = currencyDTOMapper.apply(targetCurrency);
-
-        BigDecimal convertedAmount = amount.multiply(rate);
+    public CertainExchangeRateWithAmountDTO mapToDTO(CurrencyDTO baseCurrency, CurrencyDTO targetCurrency, BigDecimal rate, BigDecimal amount, BigDecimal convertedAmount) {
 
         return new CertainExchangeRateWithAmountDTO(
-                baseCurrencyDTO,
-                targetCurrencyDTO,
+                baseCurrency,
+                targetCurrency,
                 rate,
                 amount,
                 convertedAmount

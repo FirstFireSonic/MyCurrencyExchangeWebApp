@@ -1,9 +1,11 @@
 package com.currency.services;
 
 import com.currency.dto.CertainExchangeRateDTO;
+import com.currency.dto.CertainExchangeRateWithAmountDTO;
 import com.currency.dto.CurrencyDTO;
 import com.currency.dto.ExchangeRateDTO;
 import com.currency.mapper.CertainExchangeRateDTOMapper;
+import com.currency.mapper.CertainExchangeRateWithAmountDTOMapper;
 import com.currency.mapper.CurrencyDTOMapper;
 import com.currency.mapper.ExchangeRateDTOMapper;
 import com.currency.models.Currency;
@@ -38,14 +40,17 @@ public class ExchangeRateService {
 
     private CurrencyDTOMapper currencyDTOMapper;
 
+    private CertainExchangeRateWithAmountDTOMapper certainExchangeRateWithAmountDTOMapper;
+
     @Autowired
-    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper, CertainExchangeRateDTOMapper certainExchangeRateDTOMapper, CurrencyService currencyService, CurrencyDTOMapper currencyDTOMapper) {
+    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper, CertainExchangeRateDTOMapper certainExchangeRateDTOMapper, CurrencyService currencyService, CurrencyDTOMapper currencyDTOMapper, CertainExchangeRateWithAmountDTOMapper certainExchangeRateWithAmountDTOMapper) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.entityManager = entityManager;
         this.exchangeRateDTOMapper = exchangeRateDTOMapper;
         this.certainExchangeRateDTOMapper = certainExchangeRateDTOMapper;
         this.currencyService = currencyService;
         this.currencyDTOMapper = currencyDTOMapper;
+        this.certainExchangeRateWithAmountDTOMapper = certainExchangeRateWithAmountDTOMapper;
     }
 
     public List<ExchangeRateDTO> getAllExchangeRates() {
@@ -55,7 +60,7 @@ public class ExchangeRateService {
                 .collect(Collectors.toList());
     }
 
-    public double getExchangeRateByTargetCurrencyCode(String targetCurrencyCode) {
+    private double getExchangeRateByTargetCurrencyCode(String targetCurrencyCode) {
         if ("USD".equals(targetCurrencyCode)) {
             return 1.0;
         }
@@ -79,7 +84,7 @@ public class ExchangeRateService {
         }
     }
 
-    public BigDecimal getExchangeRate(String code1, String code2) {
+    private BigDecimal getExchangeRate(String code1, String code2) {
         BigDecimal code1Value = BigDecimal.valueOf(getExchangeRateByTargetCurrencyCode(code1));
         BigDecimal code2Value = BigDecimal.valueOf(getExchangeRateByTargetCurrencyCode(code2));
 
@@ -94,15 +99,35 @@ public class ExchangeRateService {
 
     public CertainExchangeRateDTO getCertainExchangeRate(String code1, String code2) {
 
-        Optional<Currency> baseCurrencyOptional = currencyService.getCurrency(code1);
-        Optional<Currency> targetCurrencyOptional = currencyService.getCurrency(code2);
+        Currency baseCurrencyOptional = currencyService.getCurrency(code1)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid base currency code: " + code1));
+        Currency targetCurrencyOptional = currencyService.getCurrency(code2)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid target currency code: " + code2));
 
-        Optional<CurrencyDTO> baseCurrency = baseCurrencyOptional.map(currencyDTOMapper);
-        Optional<CurrencyDTO> targetCurrency = targetCurrencyOptional.map(currencyDTOMapper);
+        CurrencyDTO baseCurrency = currencyDTOMapper.apply(baseCurrencyOptional);
+        CurrencyDTO targetCurrency = currencyDTOMapper.apply(targetCurrencyOptional);
+
 
         BigDecimal rate = getExchangeRate(code1, code2);
 
         return certainExchangeRateDTOMapper.mapToDTO(baseCurrency, targetCurrency, rate);
+    }
+
+    public CertainExchangeRateWithAmountDTO getCertainExchangeRateWithAmount (String code1, String code2, BigDecimal amount) {
+
+        Currency baseCurrencyOptional = currencyService.getCurrency(code1)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid base currency code: " + code1));
+        Currency targetCurrencyOptional = currencyService.getCurrency(code2)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid target currency code: " + code2));
+
+        CurrencyDTO baseCurrency = currencyDTOMapper.apply(baseCurrencyOptional);
+        CurrencyDTO targetCurrency = currencyDTOMapper.apply(targetCurrencyOptional);
+
+        BigDecimal rate = getExchangeRate(code1, code2);
+
+        BigDecimal convertedAmount = amount.multiply(rate);
+
+        return certainExchangeRateWithAmountDTOMapper.mapToDTO(targetCurrency, baseCurrency, rate, amount, convertedAmount);
     }
 
 }
