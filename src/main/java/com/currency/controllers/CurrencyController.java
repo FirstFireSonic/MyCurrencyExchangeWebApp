@@ -54,6 +54,7 @@ public class CurrencyController {
                         .fullName(name)
                         .sign(sign)
                         .build()
+
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCurrency);
     }
