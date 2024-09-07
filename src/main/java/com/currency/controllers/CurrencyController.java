@@ -28,7 +28,7 @@ public class CurrencyController {
         if (allCurrencies.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(allCurrencies);
+            return new ResponseEntity<>(allCurrencies, HttpStatus.OK);
         }
     }
 
@@ -59,7 +59,7 @@ public class CurrencyController {
                         .sign(sign)
                         .build()
         );
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedCurrency);
+        return new ResponseEntity<>(savedCurrency, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete")
@@ -68,7 +68,7 @@ public class CurrencyController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         currencyService.deleteCurrencyByCode(code);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
 }
