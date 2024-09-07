@@ -34,8 +34,12 @@ public class CurrencyController {
 
     @GetMapping("/{sign}")
     public ResponseEntity<Currency> getCurrency(@PathVariable("sign") String sign) {
-        Optional<Currency> optionalCurrency = currencyService.getCurrency(sign);
-        return optionalCurrency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (sign == null || sign.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            Optional<Currency> optionalCurrency = currencyService.getCurrency(sign);
+            return optionalCurrency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        }
     }
 
     @PostMapping("/add")
