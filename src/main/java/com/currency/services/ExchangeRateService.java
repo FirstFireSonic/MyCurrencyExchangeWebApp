@@ -1,8 +1,12 @@
 package com.currency.services;
 
+import com.currency.dto.CertainExchangeRateDTO;
+import com.currency.dto.CurrencyDTO;
 import com.currency.dto.ExchangeRateDTO;
+import com.currency.mapper.CertainExchangeRateDTOMapper;
+import com.currency.mapper.CurrencyDTOMapper;
 import com.currency.mapper.ExchangeRateDTOMapper;
-import com.currency.models.ExchangeRate;
+import com.currency.models.Currency;
 import com.currency.repositories.ExchangeRateRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -12,26 +16,36 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collector;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
 public class ExchangeRateService {
 
-    private ExchangeRateRepository exchangeRateRepository;
-
     @PersistenceContext
     private EntityManager entityManager;
 
+    private ExchangeRateRepository exchangeRateRepository;
+
     private ExchangeRateDTOMapper exchangeRateDTOMapper;
 
+    private CertainExchangeRateDTOMapper certainExchangeRateDTOMapper;
+
+    private CurrencyService currencyService;
+
+    private CurrencyDTOMapper currencyDTOMapper;
+
     @Autowired
-    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper) {
+    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper, CertainExchangeRateDTOMapper certainExchangeRateDTOMapper, CurrencyService currencyService, CurrencyDTOMapper currencyDTOMapper) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.entityManager = entityManager;
         this.exchangeRateDTOMapper = exchangeRateDTOMapper;
+        this.certainExchangeRateDTOMapper = certainExchangeRateDTOMapper;
+        this.currencyService = currencyService;
+        this.currencyDTOMapper = currencyDTOMapper;
     }
 
     public List<ExchangeRateDTO> getAllExchangeRates() {
@@ -63,6 +77,32 @@ public class ExchangeRateService {
         } catch (NoResultException e) {
             throw new IllegalArgumentException("No exchange rate found for the currency code: " + targetCurrencyCode, e);
         }
+    }
+
+    public BigDecimal getExchangeRate(String code1, String code2) {
+        BigDecimal code1Value = BigDecimal.valueOf(getExchangeRateByTargetCurrencyCode(code1));
+        BigDecimal code2Value = BigDecimal.valueOf(getExchangeRateByTargetCurrencyCode(code2));
+
+        BigDecimal result = code1Value.divide(code2Value, 6, BigDecimal.ROUND_DOWN);
+
+        if (result.stripTrailingZeros().scale() <= 2) {
+            return code1Value.divide(code2Value, 2, BigDecimal.ROUND_DOWN);
+        } else {
+            return result;
+        }
+    }
+
+    public CertainExchangeRateDTO getCertainExchangeRate(String code1, String code2) {
+
+        Optional<Currency> baseCurrencyOptional = currencyService.getCurrency(code1);
+        Optional<Currency> targetCurrencyOptional = currencyService.getCurrency(code2);
+
+        Optional<CurrencyDTO> baseCurrency = baseCurrencyOptional.map(currencyDTOMapper);
+        Optional<CurrencyDTO> targetCurrency = targetCurrencyOptional.map(currencyDTOMapper);
+
+        BigDecimal rate = getExchangeRate(code1, code2);
+
+        return certainExchangeRateDTOMapper.mapToDTO(baseCurrency, targetCurrency, rate);
     }
 
 }
