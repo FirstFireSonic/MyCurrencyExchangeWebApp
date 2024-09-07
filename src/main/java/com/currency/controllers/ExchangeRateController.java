@@ -1,16 +1,14 @@
 package com.currency.controllers;
 
+import com.currency.dto.CertainExchangeRateDTO;
 import com.currency.dto.ExchangeRateDTO;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
-import com.currency.exception.NoExistCurrencyException;
-import com.currency.exception.TheSameCurrencyToExchangeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -32,39 +30,26 @@ public class ExchangeRateController {
         if (exchangeRates.isEmpty()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(exchangeRates);
+            return new ResponseEntity<>(exchangeRates, HttpStatus.OK);
         }
     }
 
     @GetMapping("/{codes}")
-    public ResponseEntity<String> getCertainExchangeRate(@PathVariable("codes") String codes) {
+    public ResponseEntity<CertainExchangeRateDTO> getCertainExchangeRate(@PathVariable("codes") String codes) {
+
         String code1 = codes.substring(0, 3);
         String code2 = codes.substring(3, 6);
 
-        if (!currencyService.existsCurrencyByCode(code1) ||
+        if (code1 == null || code2 == null ||
+                code1.isEmpty() || code2.isEmpty() ||
+                !currencyService.existsCurrencyByCode(code1) ||
                 !currencyService.existsCurrencyByCode(code2)) {
-            throw new NoExistCurrencyException("This currency does not exist!");
-        }
-
-        if (code1.equals(code2)) {
-            throw new TheSameCurrencyToExchangeException("Those currencies are the same!");
-        }
-
-        BigDecimal code1Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(code1));
-        BigDecimal code2Value = BigDecimal.valueOf(exchangeRateService.getExchangeRateByTargetCurrencyCode(code2));
-
-        BigDecimal currency = code1Value.divide(code2Value, 6, BigDecimal.ROUND_DOWN);
-        String result = currency.toString();
-        if (result.endsWith(".000000")) {
-            result = result.substring(0, result.indexOf('.'));
-        }
-        String formattedResponse = "";
-        if (code1.equals("USD") || code2.equals("USD")) {
-            formattedResponse = "1-" + code1 + "/" + code2 + "-" + result;
+            return ResponseEntity.badRequest().build();
         } else {
-            formattedResponse = "1-" + code2 + "/" + code1 + "-" + result;
+            CertainExchangeRateDTO certainExchangeRateDTO = exchangeRateService.getCertainExchangeRate(code1, code2);
+            return new ResponseEntity<>(certainExchangeRateDTO, HttpStatus.OK);
         }
-        return new ResponseEntity<>(formattedResponse, HttpStatus.OK);
+
     }
 
 //    @GetMapping("/certain")
