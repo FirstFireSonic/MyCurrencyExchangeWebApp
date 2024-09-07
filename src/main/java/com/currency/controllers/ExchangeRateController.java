@@ -1,7 +1,6 @@
 package com.currency.controllers;
 
 import com.currency.dto.ExchangeRateDTO;
-import com.currency.exception.NoExchangeRateExistException;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
 import com.currency.exception.NoExistCurrencyException;
@@ -27,7 +26,7 @@ public class ExchangeRateController {
         this.currencyService = currencyService;
     }
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
         List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
         if (exchangeRates.isEmpty()) {
@@ -37,7 +36,7 @@ public class ExchangeRateController {
         }
     }
 
-    @GetMapping("{codes}")
+    @GetMapping("/{codes}")
     public ResponseEntity<String> getCertainExchangeRate(@PathVariable("codes") String codes) {
         String code1 = codes.substring(0, 3);
         String code2 = codes.substring(3, 6);
