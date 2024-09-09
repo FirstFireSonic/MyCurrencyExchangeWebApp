@@ -1,14 +1,15 @@
 package com.currency.controllers;
 
 import com.currency.dto.CertainExchangeRateDTO;
+import com.currency.dto.CertainExchangeRateWithAmountDTO;
 import com.currency.dto.ExchangeRateDTO;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -26,37 +27,54 @@ public class ExchangeRateController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
+
         List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
+
         if (exchangeRates.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(exchangeRates, HttpStatus.OK);
+            return ResponseEntity.ok(exchangeRates);
         }
+
     }
 
     @GetMapping("/{codes}")
     public ResponseEntity<CertainExchangeRateDTO> getCertainExchangeRate(@PathVariable("codes") String codes) {
 
+        if (codes.length() != 6) {
+            return ResponseEntity.badRequest().build();
+        }
+
         String code1 = codes.substring(0, 3);
         String code2 = codes.substring(3, 6);
 
-        if (code1 == null || code2 == null ||
-                code1.isEmpty() || code2.isEmpty() ||
+        if (code1.isEmpty() || code2.isEmpty() ||
                 !currencyService.existsCurrencyByCode(code1) ||
                 !currencyService.existsCurrencyByCode(code2)) {
             return ResponseEntity.badRequest().build();
         } else {
             CertainExchangeRateDTO certainExchangeRateDTO = exchangeRateService.getCertainExchangeRate(code1, code2);
-            return new ResponseEntity<>(certainExchangeRateDTO, HttpStatus.OK);
+            return ResponseEntity.ok(certainExchangeRateDTO);
         }
 
     }
 
-//    @GetMapping("/certain")
-//    public ResponseEntity<String> getCertainExchangeRateWithAmount(
-//            @RequestParam("from") String from,
-//            @RequestParam("to") String to,
-//            @RequestParam("amount") int amount) {
-//
-//    }
+    @GetMapping("/certain")
+    public ResponseEntity<CertainExchangeRateWithAmountDTO> getCertainExchangeRateWithAmount(
+            @RequestParam("from") String from,
+            @RequestParam("to") String to,
+            @RequestParam("amount") BigDecimal amount) {
+
+        if (from == null || to == null ||
+                from.isEmpty() || to.isEmpty() ||
+                !currencyService.existsCurrencyByCode(from) ||
+                !currencyService.existsCurrencyByCode(to)) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            CertainExchangeRateWithAmountDTO certainExchangeRateDTO = exchangeRateService.getCertainExchangeRateWithAmount(to, from, amount);
+            return ResponseEntity.ok(certainExchangeRateDTO);
+        }
+
+    }
+
 }
