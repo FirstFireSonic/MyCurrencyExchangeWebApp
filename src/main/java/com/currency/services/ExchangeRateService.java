@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,7 +109,7 @@ public class ExchangeRateService {
 
         BigDecimal rate = getExchangeRate(code1, code2);
 
-        return certainExchangeRateDTOMapper.mapToDTO(baseCurrency, targetCurrency, rate);
+        return certainExchangeRateDTOMapper.apply(baseCurrency, targetCurrency, rate);
     }
 
     public CertainExchangeRateWithAmountDTO getCertainExchangeRateWithAmount (String code1, String code2, BigDecimal amount) {
@@ -127,7 +126,7 @@ public class ExchangeRateService {
 
         BigDecimal convertedAmount = amount.multiply(rate);
 
-        return certainExchangeRateWithAmountDTOMapper.mapToDTO(targetCurrency, baseCurrency, rate, amount, convertedAmount);
+        return certainExchangeRateWithAmountDTOMapper.apply(targetCurrency, baseCurrency, rate, amount, convertedAmount);
     }
 
 }
