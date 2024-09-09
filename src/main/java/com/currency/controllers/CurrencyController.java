@@ -4,7 +4,6 @@ import com.currency.dto.CurrencyDTO;
 import com.currency.models.Currency;
 import com.currency.services.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,22 +23,27 @@ public class CurrencyController {
 
     @GetMapping("/all")
     public ResponseEntity<List<CurrencyDTO>> getAllAvailableCurrencies() {
+
         List<CurrencyDTO> allCurrencies = currencyService.getCurrencies();
+
         if (allCurrencies.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(allCurrencies, HttpStatus.OK);
+            return ResponseEntity.ok(allCurrencies);
         }
+
     }
 
     @GetMapping("/{sign}")
     public ResponseEntity<Currency> getCurrency(@PathVariable("sign") String sign) {
+
         if (sign == null || sign.isEmpty()) {
             return ResponseEntity.badRequest().build();
         } else {
             Optional<Currency> optionalCurrency = currencyService.getCurrency(sign);
             return optionalCurrency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         }
+
     }
 
     @PostMapping("/add")
@@ -59,16 +63,22 @@ public class CurrencyController {
                         .sign(sign)
                         .build()
         );
-        return new ResponseEntity<>(savedCurrency, HttpStatus.CREATED);
+
+        return ResponseEntity.ok(savedCurrency);
+
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteCurrency(@RequestParam(value = "code", required = false) String code) {
+
         if (code == null || code.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.badRequest().build();
         }
+
         currencyService.deleteCurrencyByCode(code);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return ResponseEntity.noContent().build();
+
     }
 
 }

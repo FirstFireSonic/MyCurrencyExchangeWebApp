@@ -3,11 +3,9 @@ package com.currency.controllers;
 import com.currency.dto.CertainExchangeRateDTO;
 import com.currency.dto.CertainExchangeRateWithAmountDTO;
 import com.currency.dto.ExchangeRateDTO;
-import com.currency.mapper.CertainExchangeRateWithAmountDTOMapper;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,12 +27,15 @@ public class ExchangeRateController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
+
         List<ExchangeRateDTO> exchangeRates = exchangeRateService.getAllExchangeRates();
+
         if (exchangeRates.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         } else {
-            return new ResponseEntity<>(exchangeRates, HttpStatus.OK);
+            return ResponseEntity.ok(exchangeRates);
         }
+
     }
 
     @GetMapping("/{codes}")
@@ -53,7 +54,7 @@ public class ExchangeRateController {
             return ResponseEntity.badRequest().build();
         } else {
             CertainExchangeRateDTO certainExchangeRateDTO = exchangeRateService.getCertainExchangeRate(code1, code2);
-            return new ResponseEntity<>(certainExchangeRateDTO, HttpStatus.OK);
+            return ResponseEntity.ok(certainExchangeRateDTO);
         }
 
     }
@@ -64,7 +65,6 @@ public class ExchangeRateController {
             @RequestParam("to") String to,
             @RequestParam("amount") BigDecimal amount) {
 
-
         if (from == null || to == null ||
                 from.isEmpty() || to.isEmpty() ||
                 !currencyService.existsCurrencyByCode(from) ||
@@ -72,7 +72,7 @@ public class ExchangeRateController {
             return ResponseEntity.badRequest().build();
         } else {
             CertainExchangeRateWithAmountDTO certainExchangeRateDTO = exchangeRateService.getCertainExchangeRateWithAmount(to, from, amount);
-            return new ResponseEntity<>(certainExchangeRateDTO, HttpStatus.OK);
+            return ResponseEntity.ok(certainExchangeRateDTO);
         }
 
     }
