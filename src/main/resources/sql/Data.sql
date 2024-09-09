@@ -42,12 +42,6 @@ insert into currency_exchange.currency (code, full_name, sign) values ('CZK', 'C
 insert into currency_exchange.currency (code, full_name, sign) values ('ARS', 'Argentine Peso', '$');
 insert into currency_exchange.currency (code, full_name, sign) values ('COP', 'Colombian Peso', '$');
 insert into currency_exchange.currency (code, full_name, sign) values ('PEN', 'Peruvian Sol', 'S/');
-insert into currency_exchange.currency (code, full_name, sign) values ('DZD', 'Algerian Dinar', 'دج');
-insert into currency_exchange.currency (code, full_name, sign) values ('IQD', 'Iraqi Dinar', 'ع.د');
-insert into currency_exchange.currency (code, full_name, sign) values ('KWD', 'Kuwaiti Dinar', 'د.ك');
-insert into currency_exchange.currency (code, full_name, sign) values ('BHD', 'Bahraini Dinar', 'ب.د');
-insert into currency_exchange.currency (code, full_name, sign) values ('OMR', 'Omani Rial', '﷼');
-insert into currency_exchange.currency (code, full_name, sign) values ('QAR', 'Qatari Rial', '﷼');
 
 insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 2, 0.94);   -- EUR
 insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 3, 63.75);  -- RUB
@@ -92,9 +86,4 @@ insert into currency_exchange.exchange_rate (base_currency_id, target_currency_i
 insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 42, 0.94);  -- ARS
 insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 43, 0.94);  -- COP
 insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 44, 3.70);  -- PEN
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 45, 0.24);  -- DZD
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 46, 0.24);  -- IQD
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 47, 0.21);  -- KWD
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 48, 0.25);  -- BHD
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 49, 0.26);  -- OMR
-insert into currency_exchange.exchange_rate (base_currency_id, target_currency_id, rate) values (1, 50, 0.26);  -- QAR
+
