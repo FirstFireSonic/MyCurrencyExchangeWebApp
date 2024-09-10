@@ -5,7 +5,7 @@ import com.currency.dto.CertainExchangeRateWithAmountDTO;
 import com.currency.dto.ExchangeRateDTO;
 import com.currency.services.CurrencyService;
 import com.currency.services.ExchangeRateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,17 +13,12 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/exchange-rate")
 public class ExchangeRateController {
 
-    private ExchangeRateService exchangeRateService;
-    private CurrencyService currencyService;
-
-    @Autowired
-    public ExchangeRateController(ExchangeRateService exchangeRateService, CurrencyService currencyService) {
-        this.exchangeRateService = exchangeRateService;
-        this.currencyService = currencyService;
-    }
+    private final ExchangeRateService exchangeRateService;
+    private final CurrencyService currencyService;
 
     @GetMapping("/all")
     public ResponseEntity<List<ExchangeRateDTO>> getAllAvailableExchangeRates() {
