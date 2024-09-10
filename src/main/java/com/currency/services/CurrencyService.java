@@ -4,7 +4,7 @@ import com.currency.dto.CurrencyDTO;
 import com.currency.mapper.CurrencyDTOMapper;
 import com.currency.models.Currency;
 import com.currency.repositories.CurrencyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,17 +13,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CurrencyService {
 
     private final CurrencyRepository currencyRepository;
     private final CurrencyDTOMapper currencyDTOMapper;
-
-    @Autowired
-    public CurrencyService(CurrencyRepository currencyRepository, CurrencyDTOMapper currencyDTOMapper) {
-        this.currencyRepository = currencyRepository;
-        this.currencyDTOMapper = currencyDTOMapper;
-    }
 
     public List<CurrencyDTO> getCurrencies() {
         return currencyRepository.findAll()
