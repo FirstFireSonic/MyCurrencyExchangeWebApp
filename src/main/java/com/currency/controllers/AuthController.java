@@ -24,6 +24,11 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
+
+        if (request.getUsername() == null || request.getPassword() == null || request.getEmail() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
@@ -31,6 +36,11 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
+
+        if (request.getUsername() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
