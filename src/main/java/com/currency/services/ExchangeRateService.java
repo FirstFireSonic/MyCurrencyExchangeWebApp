@@ -14,7 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,34 +23,24 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ExchangeRateService {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    private ExchangeRateRepository exchangeRateRepository;
+    private final ExchangeRateRepository exchangeRateRepository;
 
-    private ExchangeRateDTOMapper exchangeRateDTOMapper;
+    private final ExchangeRateDTOMapper exchangeRateDTOMapper;
 
-    private CertainExchangeRateDTOMapper certainExchangeRateDTOMapper;
+    private final CertainExchangeRateDTOMapper certainExchangeRateDTOMapper;
 
-    private CurrencyService currencyService;
+    private final CurrencyService currencyService;
 
-    private CurrencyDTOMapper currencyDTOMapper;
+    private final CurrencyDTOMapper currencyDTOMapper;
 
-    private CertainExchangeRateWithAmountDTOMapper certainExchangeRateWithAmountDTOMapper;
-
-    @Autowired
-    public ExchangeRateService(ExchangeRateRepository exchangeRateRepository, EntityManager entityManager, ExchangeRateDTOMapper exchangeRateDTOMapper, CertainExchangeRateDTOMapper certainExchangeRateDTOMapper, CurrencyService currencyService, CurrencyDTOMapper currencyDTOMapper, CertainExchangeRateWithAmountDTOMapper certainExchangeRateWithAmountDTOMapper) {
-        this.exchangeRateRepository = exchangeRateRepository;
-        this.entityManager = entityManager;
-        this.exchangeRateDTOMapper = exchangeRateDTOMapper;
-        this.certainExchangeRateDTOMapper = certainExchangeRateDTOMapper;
-        this.currencyService = currencyService;
-        this.currencyDTOMapper = currencyDTOMapper;
-        this.certainExchangeRateWithAmountDTOMapper = certainExchangeRateWithAmountDTOMapper;
-    }
+    private final CertainExchangeRateWithAmountDTOMapper certainExchangeRateWithAmountDTOMapper;
 
     public List<ExchangeRateDTO> getAllExchangeRates() {
         return exchangeRateRepository.findAll()
