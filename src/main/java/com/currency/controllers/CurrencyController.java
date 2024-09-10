@@ -3,7 +3,7 @@ package com.currency.controllers;
 import com.currency.dto.CurrencyDTO;
 import com.currency.models.Currency;
 import com.currency.services.CurrencyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/currency")
 public class CurrencyController {
 
-    private CurrencyService currencyService;
-
-    @Autowired
-    public CurrencyController(CurrencyService currencyService) {
-        this.currencyService = currencyService;
-    }
+    private final CurrencyService currencyService;
 
     @GetMapping("/all")
     public ResponseEntity<List<CurrencyDTO>> getAllAvailableCurrencies() {
@@ -43,41 +39,6 @@ public class CurrencyController {
             Optional<Currency> optionalCurrency = currencyService.getCurrency(sign);
             return optionalCurrency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         }
-
-    }
-
-    @PostMapping("/add")
-    public ResponseEntity<Currency> addNewCurrency(
-            @RequestParam("name") String name,
-            @RequestParam("code") String code,
-            @RequestParam("sign") String sign) {
-
-        if (name == null || name.isEmpty() || code == null || code.isEmpty() || sign == null || sign.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Currency savedCurrency = currencyService.addCurrency(
-                Currency.builder()
-                        .code(code)
-                        .fullName(name)
-                        .sign(sign)
-                        .build()
-        );
-
-        return ResponseEntity.ok(savedCurrency);
-
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCurrency(@RequestParam(value = "code", required = false) String code) {
-
-        if (code == null || code.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        currencyService.deleteCurrencyByCode(code);
-
-        return ResponseEntity.noContent().build();
 
     }
 
